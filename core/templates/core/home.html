@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{% url 'credit' %}" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-3">
+                <input placeholder="Amount" class="form-control" type="number" name="amount">
+            </div>
+            <div class="col-3">
+                <input placeholder="Description" class="form-control" type="text" name="description">
+            </div>
+            <div class="col-3">
+                <input placeholder="Date" class="form-control" type="date" name="date">
+            </div>
+            <div class="col-3">
+                <button class="btn btn-success" type="submit">Credit</button>
+            </div>
+        </div>
+    </form>
+    <br>
+    <form action="{% url 'debit' %}" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-3">
+                <input placeholder="Amount" class="form-control" type="number" name="amount">
+            </div>
+            <div class="col-3">
+                <input placeholder="Description" class="form-control" type="text" name="description">
+            </div>
+            <div class="col-3">
+                <input placeholder="Date" class="form-control" type="date" name="date">
+            </div>
+            <div class="col-3">
+                <button class="btn btn-warning" type="submit">Debit</button>
+            </div>
+        </div>
+    </form>
+    <h3><strong>Balance: </strong>{{ balance }}</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Description</th>
+            <th scope="col">Debit</th>
+            <th scope="col">Credit</th>
+            <th scope="col">Balance</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for transaction, previous_balance in transactions %}
+            <tr>
+                <th scope="row">{{ transaction.date }}</th>
+                <td>{{ transaction.description }}</td>
+                {% if transaction.transaction_type == 'debit' %}
+                    <td>{{ transaction.amount }}</td>
+                    <td></td>
+                {% else %}
+                    <td></td>
+                    <td>{{ transaction.amount }}</td>
+                {% endif %}
+                <td>{{ previous_balance }}</td>
+                <td>
+                    <a href="{% url 'delete' transaction.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
